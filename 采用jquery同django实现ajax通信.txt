@@ -1,0 +1,65 @@
+Django ajx请求Demo：
+
+# TODO:	Search.html
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <meta charset="utf-8">
+    <title>ajx请求Demo：</title>
+</head>
+<body>
+
+<p>{{ rlt }}</p>
+{% load static %}
+<script src="{% static 'js/jquery-3.4.1.min.js' %}" type="text/javascript"></script>
+<form action="/add/" method="get">
+
+    a:<label for="a"></label><input type="text" name="a" id="a"><br>
+    b:<label for="b"></label><input type="text" name="b" id="b"><br>
+    <p>result:<span id="result"></span></p>
+    <button type="button" id="sum">Calc</button>
+</form>
+<script>
+    $.ajaxSetup({
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}'}
+    });
+    $(document).ready(function () {
+        $("#sum").click(function () {
+            const a = $('#a').val();
+            const b = $('#b').val();
+
+            $.get("/add/", {'a': a, 'b': b}, function (ret) {
+                $("#result").html(ret)
+            })
+        });
+    });
+</script>
+</body>
+</html>
+
+
+
+# TODO:	url.py
+
+path('index/', views.index),
+    path('add/', views.add),
+	
+	
+	
+# TODO:	views.py
+
+from django.shortcuts import render
+from django.http import HttpResponse
+
+# Create your views here.
+
+
+def index(request):
+    return render(request, 'Search/Search.html')
+
+
+def add(request):
+    a = request.GET['a']
+    b = request.GET['b']
+    c = int(a)+int(b)
+    return HttpResponse(str(c))
